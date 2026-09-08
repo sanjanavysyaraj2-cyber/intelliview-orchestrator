@@ -52,14 +52,25 @@ export default function InterviewPage() {
     stopTracking,
     trackEvent,
   } = useMomentTracking(activeSession);
+  const handleWebSocketMessage = useCallback(
+    (data) => {
+      if (data?.session_id && data.session_id !== activeSession) return;
+
+      if (data?.risk_score != null) {
+        setRiskScore(data.risk_score);
+      }
+
+      if (data?.feedback) {
+        setFeedback((prev) => [...prev, data.feedback].slice(-20));
+      }
+    },
+    [activeSession],
+  );
 
   const { connected } = useWebSocket({
     path: "/monitoring/ws/metrics",
     enabled: !!token && isLive,
-    onMessage: (data) => {
-      if (data?.risk_score != null) setRiskScore(data.risk_score);
-      if (data?.feedback) setFeedback((prev) => [...prev, data.feedback].slice(-20));
-    },
+    onMessage: handleWebSocketMessage,
   });
 
   const startCamera = useCallback(async () => {
