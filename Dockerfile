@@ -1,4 +1,4 @@
-FROM python:3.11-slim-bullseye
+FROM python:3.11-slim-bookworm
 
 # ---------------------------------------------------------
 # Environment
@@ -17,7 +17,7 @@ WORKDIR /app
 # ---------------------------------------------------------
 # System dependencies
 # ---------------------------------------------------------
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get -o Acquire::Check-Valid-Until=false update && apt-get install -y --no-install-recommends \
     curl \
     procps \
     gcc \
